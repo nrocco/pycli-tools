@@ -74,6 +74,7 @@ class ArgumentSuperParser(ArgumentParser):
         if parser.has_section(section):
             return dict(parser.items(section))
         else:
+            log.debug('Section %s not found. Ignoring.', section)
             return {}
 
 
@@ -90,7 +91,7 @@ class ArgumentSuperParser(ArgumentParser):
 
     def add_opt_quiet(self, parser):
         o = self.opt_quiet
-        parser.add_argument(o[0], o[1], help=o[2])
+        parser.add_argument(o[0], o[1], action='store_true', help=o[2])
 
 
     def add_opt_version(self, version, parser):
