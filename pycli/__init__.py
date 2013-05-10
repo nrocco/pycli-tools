@@ -31,29 +31,30 @@ class ArgumentSuperParser(ArgumentParser):
 
         logging.basicConfig(level=self._loglevel, format='%(message)s')
 
-        self._config_file = self._main_argv.config_file
+        self._config_file = path.expanduser(self._main_argv.config_file)
 
         if self._config_file:
             if path.isfile(self._config_file):
                 log.info('Reading default configuration from %s', self._config_file)
                 from ConfigParser import ConfigParser
-                self._config = self.get_config_parser(self._config_file)
-                self._defaults = self.parse_config_defaults(self._config, self._prog)
+                self._config = ConfigParser()
+                self._config.read(self._config_file)
+                self._default_config = self.parse_config_defaults(self._config, self._prog)
             else:
                 log.debug('Ignoring non-existent config file: %s', self._config_file)
                 self._config = None
-                self._defaults = {}
+                self._default_config = {}
         else:
             self._config = None
-            self._defaults = {}
+            self._default_config = {}
 
 
-        obj = super(ArgumentSuperParser, self).__init__(prog=self._prog, parents=[self._main], *args, **kwargs)
-
+        super(ArgumentSuperParser, self).__init__(prog=self._prog, parents=[self._main], *args, **kwargs)
         self.add_opt_version(self._version, self)
-        self.set_defaults_for_parser(self, self._defaults)
+        self.set_defaults(verbose=self._main_argv.verbose,
+                            quiet=self._main_argv.quiet, **self._default_config)
 
-        return obj
+
 
 
     def get_main_parser(self, prog):
@@ -62,12 +63,6 @@ class ArgumentSuperParser(ArgumentParser):
         self.add_opt_verbose(mp)
         self.add_opt_quiet(mp)
         return mp
-
-
-    def get_config_parser(self, file):
-        config = ConfigParser()
-        config.read(path.expanduser(file))
-        return config
 
 
     def parse_config_defaults(self, parser, section):
@@ -97,11 +92,6 @@ class ArgumentSuperParser(ArgumentParser):
     def add_opt_version(self, version, parser):
         v = self.opt_version
         parser.add_argument(v[0], v[1], action='version', version=v[2] + version)
-
-
-    def set_defaults_for_parser(self, parser, defaults):
-        parser.set_defaults(verbose=self._main_argv.verbose,
-                            quiet=self._main_argv.quiet, **defaults)
 
 
     def parse_args(self, *args, **kwargs):
