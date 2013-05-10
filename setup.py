@@ -2,10 +2,10 @@
 from setuptools import setup
 
 setup(
-    name = 'pycli',
+    name = 'pycli_tools',
     version = '1.0',
     packages = [
-        'pycli'
+        'pycli_tools'
     ],
     url = 'http://nrocco.github.io/',
     author = 'Nico Di Rocco',
