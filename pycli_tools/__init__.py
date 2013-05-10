@@ -11,7 +11,12 @@ log = logging.getLogger(__name__)
 
 class SuperArgParser(ArgumentParser):
     remaining_args = None
+    _parser_defaults = None
+
     def parse_args(self, *args, **kwargs):
+        if self._parser_defaults:
+            self.set_defaults(**self._parser_defaults)
+
         if self.remaining_args:
             return super(SuperArgParser, self).parse_args(self.remaining_args)
         else:
@@ -80,15 +85,14 @@ def get_argparser(*args, **kwargs):
     parser.remaining_args = remaining_args
     parser.add_argument('-V', '--version', action='version',
                         version='%(prog)s ' + version)
-    parser.set_defaults(
-        prog = prog,
-        version = version,
-        default_config_file = default_config_file,
-        config_file = config_file,
-        loglevel = loglevel,
-        verbose = main_args.verbose,
-        quiet = main_args.quiet,
-        **default_config
-    )
+
+    default_config['prog'] = prog
+    default_config['version'] = version
+    default_config['default_config_file'] = default_config_file
+    default_config['config_file'] = config_file
+    default_config['loglevel'] = loglevel
+    default_config['verbose'] = main_args.verbose
+    default_config['quiet'] = main_args.quiet
+    parser._parser_defaults = default_config
 
     return parser

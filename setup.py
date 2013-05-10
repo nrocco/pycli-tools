@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name = 'pycli_tools',
-    version = '1.0',
+    version = '1.1',
     packages = [
         'pycli_tools'
     ],
