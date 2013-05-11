@@ -6,9 +6,9 @@ A python module to help create predictable command line tools
 installation
 ------------
 
-Install from github
+Install from pip
 
-    $ pip install https://github.com/nrocco/pycli-tools/archive/master.zip#egg=pycli_tools-dev
+    $ pip install pycli_tools
 
 
 usage
