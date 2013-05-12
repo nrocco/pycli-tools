@@ -119,3 +119,26 @@ def get_argparser(*args, **kwargs):
     parser._parser_defaults = default_config
 
     return parser
+
+
+def ask_user_yesno(message='Are you sure you want to continue?',
+                   yes_on_enter=True, yes='y', no='n'):
+    if yes_on_enter:
+        default_answer = True
+        line = '%s [%s/%s] ' % (message, yes.upper(), no)
+    else:
+        default_answer = False
+        line = '%s [%s/%s] ' % (message, yes, no.upper())
+
+    while True:
+        answer = raw_input(line).lower()
+        if answer == '':
+            return default_answer
+        elif answer[0] == yes:
+            return True
+        elif answer[0] == no:
+            return False
+        else:
+            pass
+    return default_answer
+
