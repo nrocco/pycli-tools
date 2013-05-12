@@ -1,5 +1,7 @@
 import os
 import sys
+from nose.tools import raises
+
 from pycli_tools import get_argparser
 
 
@@ -21,11 +23,12 @@ def test_with_default_config():
 
 
 def test_overriding_default_config():
-    arguments = '-c override_me.conf'.split()
+    arguments = '-c tests.conf'.split()
     parser = get_argparser(prog='myapp', version='1.7',
-                           default_config='~/.myapprc')
-    args = parser.parse_args(arguments)
-    assert args.config_file == 'override_me.conf'
+                           default_config='~/.myapprc',
+                           arguments=arguments)
+    args = parser.parse_args()
+    assert args.config_file == 'tests.conf'
     assert args.default_config_file == '~/.myapprc'
     assert args.loglevel == 30
     assert args.prog == 'myapp'
@@ -58,17 +61,11 @@ def test_without_prog():
     assert args.version == ''
 
 
-def test_with_arguments():
+@raises(SystemExit)
+def test_with_nonexistent_configfile():
     arguments = '-vvv -c test.config'.split()
     parser = get_argparser(arguments=arguments)
     args = parser.parse_args()
-    assert args.config_file == 'test.config'
-    assert args.default_config_file == None
-    assert args.loglevel == 10
-    assert args.prog == 'pycli_test'
-    assert args.quiet == False
-    assert args.verbose == 3
-    assert args.version == ''
 
 
 def test_quiet_and_verbose():
@@ -97,3 +94,7 @@ def test_verbose_and_quiet():
     assert args.version == ''
 
 
+if '__main__' == __name__:
+    parser = get_argparser(default_config='~/.pycli_toolsrc')
+    args = parser.parse_args()
+    print args

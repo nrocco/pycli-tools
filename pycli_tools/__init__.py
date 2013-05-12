@@ -51,6 +51,7 @@ def get_main_parser(prog, default_config_file):
                         help='output more verbose')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='surpress all output')
+
     return parser
 
 
@@ -96,7 +97,12 @@ def get_argparser(*args, **kwargs):
             config.read(config_file)
             default_config = parse_config_defaults(config, prog)
         else:
-            log.debug('Ignoring non-existent config file: %s', config_file)
+            if path.abspath(path.expanduser(config_file or '')) == \
+               path.abspath(path.expanduser(default_config_file or '')):
+                log.debug('Ignoring non-existent config file: %s', config_file)
+            else:
+                mainparser.error('Config file does not exist: %s' % config_file)
+
             config = None
             default_config = {}
     else:
