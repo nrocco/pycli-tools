@@ -33,9 +33,9 @@ nose: $(NOSE)
 
 # bump the version number
 bump:
-	@test ! -z "$(version)" || echo "specify a version number: make bump version=x.x.x"; exit 1 
+	@test ! -z "$(version)" || ( echo "specify a version number: make bump version=x.x.x" && exit 1 )
 	@git status --porcelain 2> /dev/null | grep -v "^??" &&\
-	  echo 'uncommited changes. commit them first'; exit 6 ||\
+	  ( echo 'uncommited changes. commit them first' && exit 6 ) ||\
 	  echo 'Bumping version'
 	sed -i -e "/^__version__ = .*$$/s/'[^']*'/'$(version)'/" pycli_tools/__init__.py
 	git add pycli_tools/__init__.py
