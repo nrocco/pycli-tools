@@ -67,10 +67,14 @@ def parse_config_defaults(parser, section):
 def get_argparser(*args, **kwargs):
     prog = kwargs.get('prog')
     version = kwargs.pop('version', '')
+    arguments = kwargs.pop('arguments', None)
     default_config_file = kwargs.pop('default_config', None)
 
     mainparser = get_main_parser(prog, default_config_file)
-    main_args, remaining_args = mainparser.parse_known_args()
+    main_args, remaining_args = mainparser.parse_known_args(arguments)
+
+    if not prog:
+        prog = mainparser.prog
 
     if main_args.quiet:
         loglevel = 100
