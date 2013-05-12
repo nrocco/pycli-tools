@@ -11,6 +11,9 @@ module). Also there is the `--config` option that gives you the ability to read
 command line arguments from a configuration file to save users of your
 application a lot of typing.
 
+Copyright (c) 2013 Nico Di Rocco.
+License: MIT (see LICENSE for details)
+
 
 installation
 ------------

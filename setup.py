@@ -13,8 +13,10 @@ setup(
     author = pycli_tools.__author__,
     author_email = 'dirocco.nico@gmail.com',
     description = 'A python module to help create predictable command line tools',
-    long_description = pycli_tools.__doc__,
+    long_description = open('README.md').read(),
     include_package_data = True,
+    license = open('LICENSE').read(),
+    zip_safe = False,
     classifiers = [
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.6',

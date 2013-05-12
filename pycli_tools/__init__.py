@@ -1,18 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-pycli_tools is a python module that wraps the ArgumentParser class from
-the build-in argparse module.
-If you use it in your command line scripts you will get some defaults
-options added to your application such as --verbose and --quiet to
-control the verbosity of your application (using the python logging
-module).  Also there is the --config option that gives you the ability
-to read command line arguments from a configuration file to save users
-of your application a lot of typing
-
-Copyright (c) 2013 Nico Di Rocco.
-License: MIT (see LICENSE for details)
-"""
-
 import logging
 import sys
 from os import path
