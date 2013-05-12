@@ -8,7 +8,7 @@ setup(
     packages = [
         'pycli_tools'
     ],
-    download_url = 'http://github.com/nrocco/pycli-tools/archive/master.zip',
+    download_url = 'https://github.com/nrocco/pycli-tools/archive/1.2.tar.gz',
     url = 'http://nrocco.github.io/',
     author = pycli_tools.__author__,
     author_email = 'dirocco.nico@gmail.com',
