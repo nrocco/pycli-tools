@@ -22,12 +22,12 @@ deps:
 
 
 # run all tests with nosetests
-test: nose
+test: $(NOSE)
 	$(NOSE)
 
 
 # install dependencies need for testing
-nose: $(NOSE)
+$(NOSE):
 	$(PIP) install nose
 
 
