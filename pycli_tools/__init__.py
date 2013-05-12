@@ -109,8 +109,12 @@ def get_argparser(*args, **kwargs):
         config = None
         default_config = {}
 
+    if default_config_file:
+        epilog = '%s reads its default configuration from %s' % (prog, default_config_file)
+    else:
+        epilog = None
 
-    parser = SuperArgParser(prog=prog, parents=[mainparser])
+    parser = SuperArgParser(prog=prog, parents=[mainparser], epilog=epilog)
     parser.remaining_args = remaining_args
     parser.add_argument('-V', '--version', action='version',
                         version='%(prog)s ' + version)
