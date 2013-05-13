@@ -6,7 +6,7 @@ from pycli_tools import get_argparser
 
 
 
-sys.argv[0] = 'pycli_test'
+sys.argv = ['pycli_test']
 
 
 def test_with_default_config():
@@ -23,12 +23,12 @@ def test_with_default_config():
 
 
 def test_overriding_default_config():
-    arguments = '-c tests.conf'.split()
+    arguments = '-c test/tests.conf'.split()
     parser = get_argparser(prog='myapp', version='1.7',
                            default_config='~/.myapprc',
                            arguments=arguments)
     args = parser.parse_args()
-    assert args.config_file == 'tests.conf'
+    assert args.config_file == 'test/tests.conf'
     assert args.default_config_file == '~/.myapprc'
     assert args.loglevel == 30
     assert args.prog == 'myapp'
