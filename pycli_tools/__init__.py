@@ -51,24 +51,24 @@ def parse_config_defaults(parser, section):
 
 
 
-def get_argparser(*args, **kwargs):
-    prog = kwargs.get('prog')
+def get_argparser(**kwargs):
     version = kwargs.pop('version', '')
     arguments = kwargs.pop('arguments', None)
     default_config_file = kwargs.pop('default_config', None)
+    logging_format = kwargs.pop('logging_format', '%(message)s')
 
-    mainparser = get_main_parser(prog, default_config_file)
+    mainparser = get_main_parser(kwargs.get('prog'), default_config_file)
     main_args, remaining_args = mainparser.parse_known_args(arguments)
 
-    if not prog:
-        prog = mainparser.prog
+    if 'prog' not in kwargs:
+        kwargs['prog'] = mainparser.prog
 
     if main_args.quiet:
         loglevel = 100
     else:
         loglevel = max(30 - main_args.verbose * 10, 10)
 
-    logging.basicConfig(level=loglevel, format='%(message)s')
+    logging.basicConfig(level=loglevel, format=logging_format)
 
     if main_args.config_file:
         config_file = path.expanduser(main_args.config_file)
@@ -81,7 +81,7 @@ def get_argparser(*args, **kwargs):
             from ConfigParser import ConfigParser
             config = ConfigParser()
             config.read(config_file)
-            default_config = parse_config_defaults(config, prog)
+            default_config = parse_config_defaults(config, kwargs['prog'])
         else:
             if path.abspath(path.expanduser(config_file or '')) == \
                path.abspath(path.expanduser(default_config_file or '')):
@@ -96,16 +96,22 @@ def get_argparser(*args, **kwargs):
         default_config = {}
 
     if default_config_file:
-        epilog = '%s reads its default configuration from %s' % (prog, default_config_file)
+        epilog = '%s reads its default configuration from %s' % (kwargs['prog'], default_config_file)
+        if 'epilog' in kwargs:
+            kwargs['epilog'] = '%s\n\n%s' % (epilog, kwargs['epilog'])
+        else:
+            kwargs['epilog'] = epilog
     else:
-        epilog = None
+        kwargs['epilog'] = None
 
-    parser = SuperArgParser(prog=prog, parents=[mainparser], epilog=epilog)
+    kwargs['parents'] = [mainparser]
+
+    parser = SuperArgParser(**kwargs)
     parser.remaining_args = remaining_args
     parser.add_argument('-V', '--version', action='version',
                         version='%(prog)s ' + version)
 
-    default_config['prog'] = prog
+    default_config['prog'] = kwargs['prog']
     default_config['version'] = version
     default_config['default_config_file'] = default_config_file
     default_config['config_file'] = config_file

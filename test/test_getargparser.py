@@ -2,10 +2,14 @@ import os
 import sys
 from nose.tools import raises
 
+# Make sure that pycli_tools module is in the path
+test_root = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(test_root))
+
 from pycli_tools import get_argparser
 
 
-
+_old_argv = sys.argv
 sys.argv = ['pycli_test']
 
 
@@ -137,7 +141,23 @@ def test_verbose_and_quiet():
     assert args.version == ''
 
 
+def test_argumentparser_desc_and_epilog():
+    desc = 'This is a description'
+    epilog = 'This is an epilog'
+
+    parser = get_argparser(prog='myapp', default_config='myapp.conf',
+                           description=desc, epilog=epilog)
+    args = parser.parse_args()
+
+    assert epilog in parser.epilog, 'parser.epilog does not contain the given epilog'
+    assert 'myapp reads its default configuration from myapp.conf' in parser.epilog
+    assert parser.description == desc, 'Description does not match'
+
+
 if '__main__' == __name__:
-    parser = get_argparser(default_config='~/.pycli_toolsrc')
+    sys.argv = _old_argv
+    parser = get_argparser(default_config='~/.pycli_toolsrc',
+                           description='Tester test',
+                           epilog='This is an epilog')
     args = parser.parse_args()
     print args
