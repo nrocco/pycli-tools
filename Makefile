@@ -20,6 +20,11 @@ build: $(PY) test clean
 	$(PY) setup.py sdist
 
 
+# Prepare the environment for development
+develop: $(PY) deps
+	$(PY) setup.py develop
+
+
 # Upload package to PyPi
 upload: $(PY) test clean
 	$(PY) setup.py sdist register upload
