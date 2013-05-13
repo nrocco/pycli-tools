@@ -68,6 +68,11 @@ bump:
 	@echo "Version $(version) commited and tagged. You can push now :)"
 
 
+# Push to github but run tests first
+push: test
+	git push origin HEAD
+
+
 # Clean all build artifacts
 clean:
 	find . -name '*.pyc' -exec rm -f {} +
