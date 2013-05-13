@@ -12,12 +12,12 @@ init_py_file = $(package_name)/__init__.py
 
 
 # Build the source tarball
-build: clean
+build: test clean
 	$(PY) setup.py sdist
 
 
 # Upload package to PyPi
-upload: clean
+upload: test clean
 	$(PY) setup.py sdist register upload
 
 
