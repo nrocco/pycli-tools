@@ -55,7 +55,7 @@ $(COVERAGE): $(PY)
 
 
 # bump the version number
-bump:
+bump: $(PY)
 	@test ! -z "$(version)" || ( echo "specify a version number: make bump version=$(current_version)" && exit 1 )
 	@! git status --porcelain 2> /dev/null | grep -v "^??" || ( echo 'uncommited changes. commit them first' && exit 1 )
 	@echo "Bumping current version $(current_version) to $(version)"
@@ -64,7 +64,7 @@ bump:
 	git add $(init_py_file)
 	git commit -m 'Bumped version number to $(version)'
 	git tag -m 'Mark stable release version $(version)' -a $(version)
-	@echo "Version $(version) commited and tagged. You can `make push` now :)"
+	@echo "Version $(version) commited and tagged. You can 'make push' now :)"
 
 
 # Push to github but run tests first
