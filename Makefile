@@ -1,6 +1,5 @@
 .PHONY: build upload deps test bump clean
 
-VIRTUAL_ENV ?= /usr
 PY = $(VIRTUAL_ENV)/bin/python
 PIP = $(VIRTUAL_ENV)/bin/pip
 NOSE = $(VIRTUAL_ENV)/bin/nosetests
@@ -11,37 +10,42 @@ package_name = $(shell $(PY) setup.py --name)
 init_py_file = $(package_name)/__init__.py
 
 
+$(PY):
+	virtualenv env
+	$(eval VIRTUAL_ENV = $(PWD)/env)
+
+
 # Build the source tarball
-build: test clean
+build: $(PY) test clean
 	$(PY) setup.py sdist
 
 
 # Upload package to PyPi
-upload: test clean
+upload: $(PY) test clean
 	$(PY) setup.py sdist register upload
 
 
 # install development dependencies
-deps:
+deps: $(PY)
 	if [ -f requirements.txt ]; then $(PIP) install -r requirements.txt; fi
 
 
 # run all tests with nosetests
-test: deps $(NOSE)
+test: $(PY) deps $(NOSE)
 	$(NOSE)
 
 
-coverage: deps $(NOSE) $(COVERAGE)
+coverage: $(PY) deps $(NOSE) $(COVERAGE)
 	$(NOSE) --with-coverage --cover-package=$(package_name)
 
 
 # install dependencies need for testing
-$(NOSE):
+$(NOSE): $(PY)
 	$(PIP) install nose
 
 
 # Install the coverage module
-$(COVERAGE):
+$(COVERAGE): $(PY)
 	$(PIP) install coverage
 
 
