@@ -13,7 +13,7 @@ The easiest way is to install using pip:
 
    $ pip install pycli_tools
 
-Read the documentation for alternative ways of installing_
+Read the documentation for alternative ways of http://pythonhosted.org/pycli_tools/installation.html
 
 
 usage
@@ -38,13 +38,13 @@ The file `~/.myapprc` can contain:
    [myapp]
    database = /some/path/to/my/database.sqlite
 
-Read the documentation for more examples_
+Read the documentation for an extensive usage http://pythonhosted.org/pycli_tools/usage.html
 
 
 documentation
 -------------
 
-Read the full documentation here_
+Read the full documentation here http://pythonhosted.org/pycli_tools/
 
 
 Copyright (c) 2013 Nico Di Rocco.
