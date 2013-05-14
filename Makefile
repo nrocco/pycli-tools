@@ -1,4 +1,4 @@
-.PHONY: build upload deps test bump clean docs
+.PHONY: build upload deps test bump clean docs upload_docs
 
 PY = $(VIRTUAL_ENV)/bin/python
 PIP = $(VIRTUAL_ENV)/bin/pip
@@ -38,6 +38,11 @@ $(SPHINXBUILD):
 # Upload package to PyPi
 upload: $(PY) test clean
 	$(PY) setup.py sdist register upload
+
+
+# Upload Sphinx documentation to http://pythonhosted.org
+upload_docs: $(PY) test clean docs
+	$(PY) setup.py upload_docs --upload-dir docs/_build/html/
 
 
 # install development dependencies
