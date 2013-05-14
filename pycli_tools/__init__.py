@@ -15,20 +15,39 @@ log = logging.getLogger(__name__)
 
 
 class SuperArgParser(ArgumentParser):
+    '''
+    Extends the default ArgumentParser class that keeps track of the
+    remaining (unparsed) argv command line options plus default command
+    line options
+    '''
     remaining_args = None
     _parser_defaults = None
 
-    def parse_args(self, *args, **kwargs):
+    def parse_args(self, args=None, namespace=None):
+        '''
+        Override the parse_args function to maintain a clean and
+        consistent api compared to the original `ArgumentParser` class.
+
+        Almost always you do not have to supply any arguments to this
+        function.  `parse_args()` will automatically fallback to any
+        unparsed stored in `SuperArgParser.remaining_args` or `sys.argv`
+        if there are no remaining args to parse.
+        '''
         if self._parser_defaults:
             self.set_defaults(**self._parser_defaults)
 
         if self.remaining_args:
             return super(SuperArgParser, self).parse_args(self.remaining_args)
         else:
-            return super(SuperArgParser, self).parse_args(*args, **kwargs)
+            return super(SuperArgParser, self).parse_args(args=args, namespace=namespace)
 
 
 def get_main_parser(prog, default_config_file):
+    '''
+    Internal helper function that creates a new ArgumentParser instance
+    responsible for specifying the `--config`, `--verbose` and `--quiet`
+    command line options.
+    '''
     parser = ArgumentParser(prog=prog, add_help=False)
     parser.add_argument('-c', '--config', dest='config_file',
                         help='path to the config file',
@@ -37,12 +56,19 @@ def get_main_parser(prog, default_config_file):
                         help='output more verbose')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='surpress all output')
-
     return parser
 
 
 
 def parse_config_defaults(parser, section):
+    '''
+    Internal helper function that extracts default configuration values
+    from the given section in the configuration file and converts the
+    results to a dictionary
+
+    returns
+        an empty dictionary if the section was not found.
+    '''
     if parser.has_section(section):
         return dict(parser.items(section))
     else:
@@ -52,6 +78,9 @@ def parse_config_defaults(parser, section):
 
 
 def get_argparser(**kwargs):
+    '''
+    Explain here the get_argparser() function
+    '''
     version = kwargs.pop('version', '')
     arguments = kwargs.pop('arguments', None)
     default_config_file = kwargs.pop('default_config', None)
@@ -125,6 +154,14 @@ def get_argparser(**kwargs):
 
 def ask_user_yesno(message='Are you sure you want to continue?',
                    yes_on_enter=True, yes='y', no='n'):
+    '''
+    Helper function that will provide the user with a call for action.
+    Possible answers are yes or no. You can also specify the default
+    answer to take if the user provides no input.
+
+    returns
+        True if the user answers yes, False otherwise
+    '''
     if yes_on_enter:
         default_answer = True
         line = '%s [%s/%s] ' % (message, yes.upper(), no)
@@ -143,4 +180,3 @@ def ask_user_yesno(message='Are you sure you want to continue?',
         else:
             pass
     return default_answer
-

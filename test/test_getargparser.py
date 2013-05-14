@@ -156,8 +156,9 @@ def test_argumentparser_desc_and_epilog():
 
 if '__main__' == __name__:
     sys.argv = _old_argv
-    parser = get_argparser(default_config='~/.pycli_toolsrc',
-                           description='Tester test',
-                           epilog='This is an epilog')
+    sys.argv[0] = 'myapp'
+    parser = get_argparser(prog='myapp', default_config='~/.myapprc',
+                           description='My Application')
+    parser.add_argument('--database')
     args = parser.parse_args()
     print args

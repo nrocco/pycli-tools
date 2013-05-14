@@ -1,9 +1,10 @@
-.PHONY: build upload deps test bump clean
+.PHONY: build upload deps test bump clean docs
 
 PY = $(VIRTUAL_ENV)/bin/python
 PIP = $(VIRTUAL_ENV)/bin/pip
 NOSE = $(VIRTUAL_ENV)/bin/nosetests
 COVERAGE = $(VIRTUAL_ENV)/bin/coverage
+SPHINXBUILD = $(VIRTUAL_ENV)/bin/sphinx-build
 
 current_version = $(shell $(PY) setup.py --version)
 package_name = $(shell $(PY) setup.py --name)
@@ -23,6 +24,15 @@ build: $(PY) test clean
 # Prepare the environment for development
 develop: $(PY) deps
 	$(PY) setup.py develop
+
+
+# Generate documentation
+docs: $(SPHINXBUILD)
+	cd docs/; $(MAKE) html
+
+
+$(SPHINXBUILD):
+	$(PIP) install sphinx
 
 
 # Upload package to PyPi
