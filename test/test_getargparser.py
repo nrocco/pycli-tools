@@ -58,7 +58,7 @@ def test_parsing_config_file():
     assert args.loglevel == 30
     assert args.prog == 'myapp'
     assert args.quiet == False
-    assert args.username == 'earl'
+    assert args.database == '/some/path/to/my/database.sqlite'
 
 
 def test_ignoring_config_no_section():
@@ -69,10 +69,11 @@ def test_ignoring_config_no_section():
 
 
 def test_parsing_config_file_override():
-    sys.argv.append('test')
+    sys.argv.append('--database')
+    sys.argv.append('mydb.sqlite')
     parser = get_argparser(prog='myapp', version='1.7',
                            default_config='test/myapp.conf')
-    parser.add_argument('username')
+    parser.add_argument('--database')
     args = parser.parse_args()
     assert args.config_file == 'test/myapp.conf'
     assert args.default_config_file == 'test/myapp.conf'
@@ -80,7 +81,8 @@ def test_parsing_config_file_override():
     assert args.loglevel == 30
     assert args.prog == 'myapp'
     assert args.quiet == False
-    assert args.username == 'test'
+    assert args.database == 'mydb.sqlite'
+    sys.argv.pop()
     sys.argv.pop()
 
 
@@ -152,13 +154,3 @@ def test_argumentparser_desc_and_epilog():
     assert epilog in parser.epilog, 'parser.epilog does not contain the given epilog'
     assert 'myapp reads its default configuration from myapp.conf' in parser.epilog
     assert parser.description == desc, 'Description does not match'
-
-
-if '__main__' == __name__:
-    sys.argv = _old_argv
-    sys.argv[0] = 'myapp'
-    parser = get_argparser(prog='myapp', default_config='~/.myapprc',
-                           description='My Application')
-    parser.add_argument('--database')
-    args = parser.parse_args()
-    print args

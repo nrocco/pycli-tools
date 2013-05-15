@@ -1,5 +1,7 @@
 .PHONY: build upload deps test bump clean docs upload_docs
 
+VIRTUAL_ENV ?= $(PWD)/env
+
 PY = $(VIRTUAL_ENV)/bin/python
 PIP = $(VIRTUAL_ENV)/bin/pip
 NOSE = $(VIRTUAL_ENV)/bin/nosetests
@@ -27,8 +29,8 @@ develop: $(PY) deps
 
 
 # Generate documentation
-docs: $(SPHINXBUILD)
-	cd docs/; $(MAKE) html
+docs: $(PY) $(SPHINXBUILD)
+	cd docs/; $(MAKE) html SPHINXBUILD=$(SPHINXBUILD)
 
 
 $(SPHINXBUILD):
@@ -95,4 +97,4 @@ clean:
 	find . -name '*~' -exec rm -f {} +
 	find . -name '._*' -exec rm -f {} +
 	find . -name '.coverage*' -exec rm -f {} +
-	rm -rf build/ dist/ MANIFEST 2>/dev/null || true
+	rm -rf build/ dist/ MANIFEST docs/_build/* 2>/dev/null || true

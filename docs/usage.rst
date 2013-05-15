@@ -6,26 +6,22 @@ Use the :py:func:`get_argparser` helper function instead of creating your own
 
 Save the following snippet as a file `myapp.py`.
 
-.. code-block:: python
-
-    from pycli_tools import get_argparser
-    parser = get_argparser(prog='myapp', version='1.0',
-                           default_config='~/.myapprc')
-    parser.add_argument('--database')
-    parser.add_argument('action')
-    args = parser.parse_args()
+.. literalinclude:: /../test/myapp.py
+   :language: python
+   :lines: 1,3-
 
 
-Try it out for yourself. You will get some default command line options
-without doing anything
+Try it out for yourself by running `python myapp.py -h`.
+You will get some default command line options without doing anything.
 
 .. code-block:: bash
 
    $ python myapp.py -h
-   usage: myapp [-h] [-c CONFIG_FILE] [-v] [-q] [-V] [--database DATABASE]
-
-   My Application
-
+   usage: myapp [-h] [-c CONFIG_FILE] [-v] [-q] [-V] [--database DATABASE] file
+   
+   positional arguments:
+     file
+   
    optional arguments:
      -h, --help            show this help message and exit
      -c CONFIG_FILE, --config CONFIG_FILE
@@ -34,7 +30,7 @@ without doing anything
      -q, --quiet           surpress all output
      -V, --version         show program's version number and exit
      --database DATABASE
-
+   
    myapp reads its default configuration from ~/.myapprc
 
 
@@ -45,10 +41,10 @@ case `myapp`.
 
 Create the a file `~/.myapprc` with the following content:
 
-.. code-block:: python
-
-    [myapp]
-    database = /path/to/my/database.sqlite
+.. literalinclude:: /../test/myapp.conf
+   :language: ini
 
 
-Now you don't have to pass `--database` as a command line option.
+Now you don't have to pass `--database` as a command line option but in your
+application code the variable `args.database` will contain the value specified
+in the `~/.myapprc` config file.
