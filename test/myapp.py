@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os, sys; sys.path.insert(0, os.path.abspath('..'))
 
-from pycli_tools import get_argparser
+from pycli_tools.parsers import get_argparser
 
 parser = get_argparser(prog='myapp', default_config='~/.myapprc')
 parser.add_argument('--database')

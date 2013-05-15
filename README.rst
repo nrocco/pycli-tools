@@ -42,7 +42,7 @@ To create a `myapp` command that reads its default configuration from
 
 .. code-block:: python
 
-   from pycli_tools import get_argparser
+   from pycli_tools.parsers import get_argparser
 
    parser = get_argparser(prog='myapp', default_config='~/.myapprc')
    parser.add_argument('--database')

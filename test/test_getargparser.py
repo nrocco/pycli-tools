@@ -6,7 +6,7 @@ from nose.tools import raises
 test_root = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(test_root))
 
-from pycli_tools import get_argparser
+from pycli_tools.parsers import get_argparser
 
 
 _old_argv = sys.argv
