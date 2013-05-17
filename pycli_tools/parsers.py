@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 import logging
 from os import path
 
@@ -108,7 +109,10 @@ def get_argparser(**kwargs):
     if config_file:
         if path.isfile(config_file):
             log.info('Reading default configuration from %s', config_file)
-            from ConfigParser import ConfigParser
+            if sys.version_info < (3,0):
+                from ConfigParser import ConfigParser
+            else:
+                from configparser import ConfigParser
             config = ConfigParser()
             config.read(config_file)
             default_config = parse_config_defaults(config, kwargs['prog'])

@@ -1,7 +1,7 @@
 pycli_tools
 ===========
 
-  A python module to help create predictable command line tools
+  A python module to help create predictable command line tools for python >= 2.6 and 3.x
 
 `pycli_tools` is a python module that wraps the :py:class:`ArgumentParser`
 class from the build-in :py:mod:`argparse` module. 
