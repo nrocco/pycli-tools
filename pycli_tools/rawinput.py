@@ -34,14 +34,14 @@ def ask_user_yesno(message='Are you sure you want to continue?',
         default_answer = False
         line = '%s [%s/%s] ' % (message, yes, no.upper())
 
-    while True:
-        answer = raw_input(line).lower()
-        if answer == '':
-            return default_answer
-        elif answer[0] == yes:
-            return True
-        elif answer[0] == no:
-            return False
-        else:
-            pass
-    return default_answer
+    try:
+        while True:
+            answer = raw_input(line).lower()
+            if answer == '':
+                return default_answer
+            elif answer[0] == yes:
+                return True
+            elif answer[0] == no:
+                return False
+    except KeyboardInterrupt:
+        return False

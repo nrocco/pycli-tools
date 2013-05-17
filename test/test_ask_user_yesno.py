@@ -59,3 +59,9 @@ def test_abort():
         return 'a'
     rawinput.raw_input = raw_input_mock
     assert False == rawinput.ask_user_yesno(yes='c', no='a')
+
+def test_ctrl_c():
+    def raw_input_mock(prompt):
+        raise KeyboardInterrupt()
+    rawinput.raw_input = raw_input_mock
+    assert False == rawinput.ask_user_yesno()
