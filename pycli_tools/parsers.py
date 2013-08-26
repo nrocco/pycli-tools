@@ -19,6 +19,20 @@ class SuperArgParser(ArgumentParser):
     remaining_args = None
     _parser_defaults = None
 
+
+    def add_commands(self, commands):
+        subparsers = self.add_subparsers()
+        for cmd in commands:
+            sub = subparsers.add_parser(
+                cmd._get_name(),
+                help=cmd._get_help()
+            )
+            for arg in cmd._get_args():
+                sub.add_argument(*arg[0], **arg[1])
+            sub.set_defaults(func=cmd.run)
+        return subparsers
+
+
     def parse_args(self, args=None, namespace=None):
         '''
         Override the parse_args function to maintain a clean and
