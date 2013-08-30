@@ -1,7 +1,6 @@
 import re
 
 
-
 re1 = re.compile(r'(.)([A-Z][a-z]+)')
 re2 = re.compile(r'([a-z0-9])([A-Z])')
 
@@ -30,7 +29,7 @@ class Command(object):
         if hasattr(self, 'name'):
             return self.name
 
-        name = self.__class__.__name__.replace('Command','')
+        name = self.__class__.__name__.replace('Command', '')
 
         if name == '':
             raise NotImplementedError()

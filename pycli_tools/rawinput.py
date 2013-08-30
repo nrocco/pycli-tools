@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 def ask_user_yesno(message='Are you sure you want to continue?',
                    yes_on_enter=True, yes='y', no='n'):
     '''

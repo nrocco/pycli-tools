@@ -6,7 +6,6 @@ from os import path
 from argparse import ArgumentParser
 
 
-
 log = logging.getLogger(__name__)
 
 
@@ -19,7 +18,6 @@ class SuperArgParser(ArgumentParser):
     remaining_args = None
     _parser_defaults = None
 
-
     def add_commands(self, commands):
         subparsers = self.add_subparsers()
         for cmd in commands:
@@ -31,7 +29,6 @@ class SuperArgParser(ArgumentParser):
                 sub.add_argument(*arg[0], **arg[1])
             sub.set_defaults(func=cmd.run)
         return subparsers
-
 
     def parse_args(self, args=None, namespace=None):
         '''
@@ -49,7 +46,8 @@ class SuperArgParser(ArgumentParser):
         if self.remaining_args:
             return super(SuperArgParser, self).parse_args(self.remaining_args)
         else:
-            return super(SuperArgParser, self).parse_args(args=args, namespace=namespace)
+            return super(SuperArgParser, self).parse_args(args=args,
+                                                          namespace=namespace)
 
 
 def get_main_parser(prog, default_config_file):
@@ -69,7 +67,6 @@ def get_main_parser(prog, default_config_file):
     return parser
 
 
-
 def parse_config_defaults(parser, section):
     '''
     Internal helper function that extracts default configuration values
@@ -85,7 +82,6 @@ def parse_config_defaults(parser, section):
     else:
         log.debug('Section %s not found. Ignoring.', section)
         return {}
-
 
 
 def get_argparser(**kwargs):
@@ -123,7 +119,7 @@ def get_argparser(**kwargs):
     if config_file:
         if path.isfile(config_file):
             log.info('Reading default configuration from %s', config_file)
-            if sys.version_info < (3,0):
+            if sys.version_info < (3, 0):
                 from ConfigParser import ConfigParser
             else:
                 from configparser import ConfigParser
@@ -135,7 +131,8 @@ def get_argparser(**kwargs):
                path.abspath(path.expanduser(default_config_file or '')):
                 log.debug('Ignoring non-existent config file: %s', config_file)
             else:
-                mainparser.error('Config file does not exist: %s' % config_file)
+                mainparser.error('Config file '
+                                 'does not exist: %s' % config_file)
 
             config = None
             default_config = {}
@@ -144,7 +141,8 @@ def get_argparser(**kwargs):
         default_config = {}
 
     if default_config_file:
-        epilog = '%s reads its default configuration from %s' % (kwargs['prog'], default_config_file)
+        epilog = '%s reads its default configuration from %s' % \
+                 (kwargs['prog'], default_config_file)
         if 'epilog' in kwargs:
             kwargs['epilog'] = '%s\n\n%s' % (epilog, kwargs['epilog'])
         else:
