@@ -31,7 +31,7 @@ $(COVERAGE): $(PY)
 
 # Build the source tarball
 .PHONY: build
-build: $(PY) test clean
+build: $(PY) test clean check_readme
 	$(PY) setup.py sdist
 
 
@@ -49,7 +49,7 @@ docs: $(PY) $(SPHINXBUILD)
 
 # Upload package to PyPi
 .PHONY: upload
-upload: $(PY) test clean
+upload: $(PY) test clean check_readme
 	$(PY) setup.py sdist register upload
 
 
@@ -87,21 +87,7 @@ bump: $(PY)
 	git add $(init_py_file)
 	git commit -m 'Bumped version number to $(version)'
 	git tag -m 'Mark stable release version $(version)' -a $(version)
-	@echo "Version $(version) commited and tagged. You can 'make push' or 'make upload' now :)"
-
-
-# Fetch everything from github
-.PHONY: fetch
-fetch:
-	git fetch --all
-	git fetch --tags
-
-
-# Push to github but run tests first
-.PHONY: push
-push: test
-	git push origin HEAD
-	git push origin --tags
+	@echo "Version $(version) commited and tagged. You can push vcs or 'make upload' now :)"
 
 
 # Clean all build artifacts
@@ -117,4 +103,9 @@ clean:
 
 .PHONY: tags
 tags:
-	ctags --languages=python --recurse --python-kinds=-i --exclude=.git --totals=yes $(package_name)/
+	ctags --languages=python --recurse --python-kinds=-i --exclude=.git --totals=yes $(package_name)
+
+
+check_readme: $(SPHINXBUILD)
+	rst2xml.py --strict --exit-status=1 README.rst > /dev/null
+	@echo 'README.rst file passed basic lintian checks'

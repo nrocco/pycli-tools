@@ -1,18 +1,29 @@
 #!/usr/bin/env python
-from setuptools import setup
-import pycli_tools
+import os
+import re
+
+from setuptools import setup, find_packages
+
+
+with open(os.path.join(os.path.dirname(__file__), 'pycli_tools',
+                       '__init__.py'), 'rb') as file:
+    content = file.read()
+    VERSION = re.compile(r".*__version__ = '(.*?)'", re.S).match(content).group(1)
+    AUTHOR = re.compile(r".*__author__ = '(.*?)'", re.S).match(content).group(1)
+
 
 setup(
     name = 'pycli_tools',
-    version = pycli_tools.__version__,
-    packages = [
-        'pycli_tools'
-    ],
+    description = 'A python module to help create predictable command line tools for python >= 2.6 and 3.x',
+    version = VERSION,
+
+    packages = find_packages(),
     download_url = 'http://github.com/nrocco/pycli-tools',
     url = 'http://nrocco.github.io/',
-    author = pycli_tools.__author__,
+
+    author = AUTHOR,
     author_email = 'dirocco.nico@gmail.com',
-    description = 'A python module to help create predictable command line tools for python >= 2.6 and 3.x',
+
     long_description = open('README.rst').read(),
     include_package_data = True,
     license = open('LICENSE').read(),
