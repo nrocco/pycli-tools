@@ -37,5 +37,19 @@ class Command(object):
             s1 = re.sub(re1, r'\1-\2', name)
             return re.sub(re2, r'\1-\2', s1).lower()
 
+    def _get_description(self):
+        if hasattr(self, 'description'):
+            return self.description
+        elif self.__doc__:
+            doc = self.__doc__.split('\n')
+            if len(doc) > 2:
+                return self.__doc__.split('\n')[2:]
+        return None
+
+    def configure(self, parser):
+        parser.help = self._get_help()
+        parser.description = self._get_description()
+        return parser
+
     def run(self, args, parser):
         raise NotImplementedError()

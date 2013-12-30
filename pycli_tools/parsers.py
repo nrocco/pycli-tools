@@ -21,10 +21,8 @@ class SuperArgParser(ArgumentParser):
     def add_commands(self, commands):
         subparsers = self.add_subparsers()
         for cmd in commands:
-            sub = subparsers.add_parser(
-                cmd._get_name(),
-                help=cmd._get_help()
-            )
+            sub = subparsers.add_parser(cmd._get_name())
+            cmd.configure(sub)  # command can configure the parser
             for arg in cmd._get_args():
                 sub.add_argument(*arg[0], **arg[1])
             sub.set_defaults(func=cmd.run)
