@@ -21,7 +21,7 @@ class Command(object):
         if hasattr(self, 'help'):
             return self.help
         elif self.__doc__:
-            return self.__doc__.split('\n')[0]
+            return self.__doc__.strip().split('\n')[0]
         else:
             return None
 
@@ -41,15 +41,16 @@ class Command(object):
         if hasattr(self, 'description'):
             return self.description
         elif self.__doc__:
-            doc = self.__doc__.split('\n')
-            if len(doc) > 2:
-                return self.__doc__.split('\n')[2:]
+            doc_string = self.__doc__.strip().split('\n')
+            if len(doc_string) > 2:
+                return '\n'.join(doc_string[2:])
         return None
 
-    def configure(self, parser):
-        parser.help = self._get_help()
-        parser.description = self._get_description()
-        return parser
+    def _get_subparser_kwargs(self):
+        return {
+            'help': self._get_help(),
+            'description': self._get_description()
+        }
 
     def run(self, args, parser):
         raise NotImplementedError()
