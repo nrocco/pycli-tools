@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 import sys
 import logging
-from os import path
 
+from os import path
 from argparse import ArgumentParser
+
+if sys.version_info < (3, 0):
+    from ConfigParser import ConfigParser
+else:
+    from configparser import ConfigParser
 
 
 log = logging.getLogger(__name__)
@@ -48,7 +53,7 @@ class SuperArgParser(ArgumentParser):
                                                           namespace=namespace)
 
 
-def get_main_parser(prog, default_config_file):
+def get_main_parser(prog):
     '''
     Internal helper function that creates a new ArgumentParser instance
     responsible for specifying the `--config`, `--verbose` and `--quiet`
@@ -56,8 +61,7 @@ def get_main_parser(prog, default_config_file):
     '''
     parser = ArgumentParser(prog=prog, add_help=False)
     parser.add_argument('-c', '--config', dest='config_file',
-                        help='path to the config file',
-                        default=default_config_file)
+                        help='path to the config file')
     parser.add_argument('-v', '--verbose', default=0, action='count',
                         help='output more verbose')
     parser.add_argument('-q', '--quiet', action='store_true',
@@ -78,7 +82,6 @@ def parse_config_defaults(parser, section):
     if parser.has_section(section):
         return dict(parser.items(section))
     else:
-        log.debug('Section %s not found. Ignoring.', section)
         return {}
 
 
@@ -93,10 +96,9 @@ def get_argparser(**kwargs):
     '''
     version = kwargs.pop('version', '')
     arguments = kwargs.pop('arguments', None)
-    default_config_file = kwargs.pop('default_config', None)
     logging_format = kwargs.pop('logging_format', '%(message)s')
 
-    mainparser = get_main_parser(kwargs.get('prog'), default_config_file)
+    mainparser = get_main_parser(kwargs.get('prog'))
     main_args, remaining_args = mainparser.parse_known_args(arguments)
 
     if 'prog' not in kwargs:
@@ -109,38 +111,26 @@ def get_argparser(**kwargs):
 
     logging.basicConfig(level=loglevel, format=logging_format)
 
+    default_config_file = kwargs.pop('default_config', None)
+
+    if default_config_file and \
+       not isinstance(default_config_file, (list, tuple)):
+        default_config_file = [default_config_file]
+
     if main_args.config_file:
-        config_file = path.expanduser(main_args.config_file)
+        config_file = [main_args.config_file]
+    elif default_config_file:
+        config_file = default_config_file
     else:
-        config_file = None
+        config_file = []
 
-    if config_file:
-        if path.isfile(config_file):
-            log.info('Reading default configuration from %s', config_file)
-            if sys.version_info < (3, 0):
-                from ConfigParser import ConfigParser
-            else:
-                from configparser import ConfigParser
-            config = ConfigParser()
-            config.read(config_file)
-            default_config = parse_config_defaults(config, kwargs['prog'])
-        else:
-            if path.abspath(path.expanduser(config_file or '')) == \
-               path.abspath(path.expanduser(default_config_file or '')):
-                log.debug('Ignoring non-existent config file: %s', config_file)
-            else:
-                mainparser.error('Config file '
-                                 'does not exist: %s' % config_file)
-
-            config = None
-            default_config = {}
-    else:
-        config = None
-        default_config = {}
+    config = ConfigParser()
+    config.read(config_file)
+    default_config = parse_config_defaults(config, kwargs['prog'])
 
     if default_config_file:
-        epilog = '%s reads its default configuration from %s' % \
-                 (kwargs['prog'], default_config_file)
+        epilog = '%s reads its default configuration from %s unless the -c|--config option is given. In that case none of the default configuration files are parsed.' % \
+                 (kwargs['prog'], ', '.join(default_config_file))
         if 'epilog' in kwargs:
             kwargs['epilog'] = '%s\n\n%s' % (epilog, kwargs['epilog'])
         else:

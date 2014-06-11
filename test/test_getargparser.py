@@ -13,6 +13,14 @@ _old_argv = sys.argv
 sys.argv = ['pycli_test']
 
 
+def test_prog_and_version():
+    parser = get_argparser(prog='myapp', version='1.0',
+                           default_config='~/.myapprc')
+    args = parser.parse_args()
+    assert args.prog == 'myapp'
+    assert args.version == '1.0'
+
+
 def test_processing_remaining_argv():
     sys.argv.append('test')
     parser = get_argparser(prog='myapp', version='1.0',
@@ -23,41 +31,37 @@ def test_processing_remaining_argv():
     sys.argv.pop()
 
 
+def test_with_default_loglevel():
+    parser = get_argparser(prog='myapp', version='1.0',
+                           default_config='~/.myapprc')
+    args = parser.parse_args()
+    assert args.loglevel == 30
+    assert args.quiet == False
+    assert args.verbose == 0
+
+
 def test_with_default_config():
     parser = get_argparser(prog='myapp', version='1.0',
                            default_config='~/.myapprc')
     args = parser.parse_args()
-    assert args.config_file == os.path.expanduser('~/.myapprc')
-    assert args.default_config_file == '~/.myapprc'
-    assert args.loglevel == 30
-    assert args.prog == 'myapp'
-    assert args.quiet == False
-    assert args.verbose == 0
-    assert args.version == '1.0'
+    assert args.config_file == ['~/.myapprc']
+    assert args.default_config_file == ['~/.myapprc']
 
 
-def test_overriding_default_config():
+def test_specify_custom_config():
     arguments = '-c test/myapp.conf'.split()
     parser = get_argparser(prog='myapp', version='1.7',
                            default_config='~/.myapprc',
                            arguments=arguments)
     args = parser.parse_args()
-    assert args.config_file == 'test/myapp.conf'
-    assert args.default_config_file == '~/.myapprc'
-    assert args.prog == 'myapp'
-    assert args.quiet == False
+    assert args.config_file == ['test/myapp.conf']
+    assert args.default_config_file == ['~/.myapprc']
 
 
 def test_parsing_config_file():
     parser = get_argparser(prog='myapp', version='1.7',
                            default_config='test/myapp.conf')
     args = parser.parse_args()
-    assert args.config_file == 'test/myapp.conf'
-    assert args.default_config_file == 'test/myapp.conf'
-    assert args.verbose == 0
-    assert args.loglevel == 30
-    assert args.prog == 'myapp'
-    assert args.quiet == False
     assert args.database == '/some/path/to/my/database.sqlite'
 
 
@@ -75,12 +79,6 @@ def test_parsing_config_file_override():
                            default_config='test/myapp.conf')
     parser.add_argument('--database')
     args = parser.parse_args()
-    assert args.config_file == 'test/myapp.conf'
-    assert args.default_config_file == 'test/myapp.conf'
-    assert args.verbose == 0
-    assert args.loglevel == 30
-    assert args.prog == 'myapp'
-    assert args.quiet == False
     assert args.database == 'mydb.sqlite'
     sys.argv.pop()
     sys.argv.pop()
@@ -89,58 +87,40 @@ def test_parsing_config_file_override():
 def test_no_default_config():
     parser = get_argparser(prog='myapp', version='1.0')
     args = parser.parse_args()
-    assert args.config_file == None
+    assert args.config_file == []
     assert args.default_config_file == None
-    assert args.loglevel == 30
-    assert args.prog == 'myapp'
-    assert args.quiet == False
-    assert args.verbose == 0
-    assert args.version == '1.0'
 
 
 def test_without_prog():
     parser = get_argparser()
     args = parser.parse_args()
-    assert args.config_file == None
-    assert args.default_config_file == None
-    assert args.loglevel == 30
     assert args.prog == sys.argv[0]
-    assert args.quiet == False
-    assert args.verbose == 0
-    assert args.version == ''
 
 
-@raises(SystemExit)
 def test_with_nonexistent_configfile():
     arguments = '-vvv -c test.config'.split()
     parser = get_argparser(arguments=arguments)
     args = parser.parse_args()
+
+    assert True == True
 
 
 def test_quiet_and_verbose():
     arguments = '-q -vvv'.split()
     parser = get_argparser(arguments=arguments)
     args = parser.parse_args()
-    assert args.config_file == None
-    assert args.default_config_file == None
     assert args.loglevel == 100
-    assert args.prog == 'pycli_test'
     assert args.quiet == True
     assert args.verbose == 3
-    assert args.version == ''
 
 
 def test_verbose_and_quiet():
     arguments = '-vvv -q'.split()
     parser = get_argparser(arguments=arguments)
     args = parser.parse_args()
-    assert args.config_file == None
-    assert args.default_config_file == None
     assert args.loglevel == 100
-    assert args.prog == 'pycli_test'
     assert args.quiet == True
     assert args.verbose == 3
-    assert args.version == ''
 
 
 def test_argumentparser_desc_and_epilog():
