@@ -22,16 +22,17 @@ class SuperArgParser(ArgumentParser):
     '''
     remaining_args = None
     _parser_defaults = None
+    subparsers = None
 
     def add_commands(self, commands, **kwargs):
-        subparsers = self.add_subparsers(**kwargs)
+        self.subparsers = self.add_subparsers(**kwargs)
         for cmd in commands:
-            sub = subparsers.add_parser(cmd._get_name(),
-                                        **cmd._get_subparser_kwargs())
+            sub = self.subparsers.add_parser(cmd._get_name(),
+                                             **cmd._get_subparser_kwargs())
             for arg in cmd._get_args():
                 sub.add_argument(*arg[0], **arg[1])
             sub.set_defaults(func=cmd.run)
-        return subparsers
+        return self.subparsers
 
     def parse_args(self, args=None, namespace=None):
         '''
